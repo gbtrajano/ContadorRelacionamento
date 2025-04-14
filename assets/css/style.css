@@ -7,14 +7,14 @@
 }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #fff5f7 0%, #ffe4e9 100%);
-  overflow: hidden;
   position: relative;
+  padding: 20px;
 }
 
 body::before {
@@ -30,10 +30,11 @@ body::before {
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
-  padding: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
   max-width: 1200px;
+  width: 100%;
   z-index: 1;
 }
 
@@ -41,14 +42,14 @@ body::before {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(255, 192, 203, 0.5);
   border-radius: 15px;
-  padding: 25px;
+  padding: 20px;
   text-align: center;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 180px; /* Fixed width */
-  height: 150px; /* Fixed height */
+  min-width: 160px;
+  height: 150px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -78,36 +79,63 @@ body::before {
 
 .card label {
   font-family: 'Great Vibes', cursive;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 5vw, 1.8rem);
   color: #a50055;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .card p {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 5vw, 1.8rem);
   font-weight: 500;
   color: #8b0000;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  min-width: 60px; /* Ensure text doesn't shrink card */
+  min-width: 60px;
   text-align: center;
 }
 
-@media (max-width: 900px) {
+/* Media Queries for additional responsiveness */
+@media (max-width: 768px) {
   .cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 15px;
   }
 
   .card {
-    width: 200px; /* Slightly larger for mobile */
-    height: 150px;
+    min-width: 140px;
+    height: 130px;
+    padding: 15px;
+  }
+
+  .card label,
+  .card p {
+    font-size: clamp(1.3rem, 4.5vw, 1.6rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .card {
+    min-width: 100%;
+    max-width: 300px;
+    height: 120px;
     margin: 0 auto;
+    padding: 12px;
+  }
+
+  .card label,
+  .card p {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+  }
+
+  body {
+    padding: 10px;
   }
 }
