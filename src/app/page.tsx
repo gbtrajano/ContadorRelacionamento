@@ -1,8 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { differenceInSeconds, differenceInMinutes, differenceInHours, differenceInDays, differenceInWeeks, differenceInMonths, differenceInYears } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useState, useEffect, useRef } from "react";
+import { 
+  differenceInSeconds, 
+  differenceInMinutes, 
+  differenceInHours, 
+  differenceInDays, 
+  differenceInWeeks, 
+  differenceInMonths, 
+  differenceInYears 
+} from "date-fns";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { Heart, Calendar, Camera, Quote, Clock, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const [timeData, setTimeData] = useState({
@@ -16,11 +26,18 @@ export default function Home() {
   });
 
   const relationshipStartDate = new Date("2023-02-21T00:00:00");
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
     const calculateTime = () => {
       const now = new Date();
-
       setTimeData({
         seconds: differenceInSeconds(now, relationshipStartDate),
         minutes: differenceInMinutes(now, relationshipStartDate),
@@ -34,181 +51,195 @@ export default function Home() {
 
     calculateTime();
     const interval = setInterval(calculateTime, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
   const timeCards = [
-    { label: "Segundos", value: timeData.seconds.toLocaleString("pt-BR") },
-    { label: "Minutos", value: timeData.minutes.toLocaleString("pt-BR") },
-    { label: "Horas", value: timeData.hours.toLocaleString("pt-BR") },
-    { label: "Dias", value: timeData.days.toLocaleString("pt-BR") },
-    { label: "Semanas", value: timeData.weeks.toLocaleString("pt-BR") },
-    { label: "Meses", value: timeData.months.toLocaleString("pt-BR") },
-    { label: "Anos", value: timeData.years.toLocaleString("pt-BR") },
+    { label: "Anos", value: timeData.years, icon: Calendar, color: "text-amber-400" },
+    { label: "Meses", value: timeData.months, icon: Clock, color: "text-rose-400" },
+    { label: "Semanas", value: timeData.weeks, icon: Heart, color: "text-pink-400" },
+    { label: "Dias", value: timeData.days, icon: Calendar, color: "text-rose-500" },
+    { label: "Horas", value: timeData.hours.toLocaleString("pt-BR"), icon: Clock, color: "text-amber-300" },
+    { label: "Minutos", value: timeData.minutes.toLocaleString("pt-BR"), icon: Heart, color: "text-rose-300" },
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-pink-100 via-rose-50 to-pink-200">
+    <main className="relative overflow-x-hidden">
+      {/* Background Decor */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-rose-900/20 blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/10 blur-[120px]" />
+      </div>
+
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-rose-300/20" />
+      <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
+        <motion.div style={{ y, opacity }} className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-slate-950/60 to-slate-950 z-10" />
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40 scale-105 animate-pulse-soft" />
+        </motion.div>
 
-        <div className="relative z-10 text-center px-4 py-16">
-          <h1 className="text-5xl md:text-7xl font-bold text-rose-600 mb-6 animate-fade-in">
-            Nosso Amor
-          </h1>
-          <p className="text-xl md:text-2xl text-rose-500 mb-8">
-            Desde 21 de Fevereiro de 2023
-          </p>
-          <div className="w-32 h-1 bg-gradient-to-r from-pink-400 to-rose-500 mx-auto rounded-full" />
-        </div>
-
-        {/* Floating Hearts Animation */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(10)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute text-pink-300/30 animate-float"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${10 + Math.random() * 10}s`,
-              }}
-            >
-              ❤
+        <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+          >
+            <Heart className="w-12 h-12 text-rose-500 mx-auto mb-8 animate-pulse" fill="currentColor" />
+            <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-rose-100 via-rose-300 to-amber-200">
+              Nosso Amor
+            </h1>
+            <p className="text-xl md:text-2xl text-slate-400 font-light tracking-[0.2em] uppercase mb-12">
+              Desde 21 de Fevereiro de 2023
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <div className="h-[1px] w-12 bg-rose-500/50" />
+              <p className="text-rose-400 font-medium italic">E contando cada segundo...</p>
+              <div className="h-[1px] w-12 bg-rose-500/50" />
             </div>
-          ))}
+          </motion.div>
         </div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20"
+        >
+          <ChevronDown className="w-8 h-8 text-slate-500 animate-bounce" />
+        </motion.div>
       </section>
 
       {/* Counter Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center text-rose-600 mb-16">
-            Tempo Juntos
-          </h2>
+      <section className="relative z-10 py-32 px-4">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mb-24"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">A Jornada do Nosso Amor</h2>
+            <p className="text-slate-500 text-lg">Cada momento ao seu lado é um presente</p>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {timeCards.map((card, index) => (
-              <div
-                key={index}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-pink-100"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <AnimatePresence>
+              {timeCards.map((card, index) => (
+                <motion.div
+                  key={card.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="glass-card glass-card-hover rounded-3xl p-8 group"
+                >
+                  <div className="flex items-start justify-between mb-6">
+                    <div className={cn("p-3 rounded-2xl bg-white/5", card.color)}>
+                      <card.icon size={24} />
+                    </div>
+                    <span className="text-slate-600 font-mono text-sm">#{index + 1}</span>
+                  </div>
+                  <h3 className="text-slate-400 text-sm uppercase tracking-widest mb-2">{card.label}</h3>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl md:text-5xl font-bold text-white group-hover:text-rose-400 transition-colors duration-300">
+                      {card.value}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12 glass-card rounded-3xl p-10 text-center"
+          >
+            <p className="text-slate-400 text-sm uppercase tracking-[0.3em] mb-4">Total de Segundos</p>
+            <span className="text-4xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-amber-500">
+              {timeData.seconds.toLocaleString("pt-BR")}
+            </span>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+      <section className="relative z-10 py-32 px-4 bg-slate-950/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-4">
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">Nossa História</h2>
+              <p className="text-slate-500">Alguns dos momentos mais marcantes que vivemos</p>
+            </div>
+            <Camera className="text-rose-500 w-12 h-12 opacity-20" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -10 }}
+                className="group relative aspect-[4/5] overflow-hidden rounded-3xl glass-card"
               >
-                <h3 className="text-rose-500 text-lg font-medium mb-2 text-center">
-                  {card.label}
-                </h3>
-                <p className="text-4xl md:text-5xl font-bold text-rose-600 text-center">
-                  {card.value}
-                </p>
-              </div>
+                <img
+                  src={`/images/foto${i}.png`}
+                  alt={`Momento ${i}`}
+                  className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-110 transition-all duration-700"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://images.unsplash.com/photo-1516589174184-c685266e4871?q=80&w=600&auto=format&fit=crop`;
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
+                <div className="absolute bottom-0 left-0 right-0 p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                   <div className="h-1 w-12 bg-rose-500 mb-4 rounded-full" />
+                   <p className="text-white text-xl font-semibold italic">
+                    {i === 1 && "Nosso Primeiro Encontro"}
+                    {i === 2 && "Nossa Viagem Especial"}
+                    {i === 3 && "Um Momento Mágico"}
+                    {i === 4 && "Celebrando a Vida"}
+                    {i === 5 && "Onde Tudo Começou"}
+                    {i === 6 && "Nosso Futuro Juntos"}
+                   </p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Photo Gallery Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-rose-100/50 to-pink-100/50">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center text-rose-600 mb-16">
-            Nossos Momentos
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Photo 1 */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-xl aspect-[4/3]">
-              <img
-                src="/images/foto1.png"
-                alt="Nosso primeiro encontro"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-rose-600/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <p className="text-white text-lg font-medium">Nosso Primeiro Encontro</p>
-              </div>
-            </div>
-
-            {/* Photo 2 */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-xl aspect-[4/3]">
-              <img
-                src="/images/foto2.png"
-                alt="Viagem especial"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-rose-600/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <p className="text-white text-lg font-medium">Nossa Viagem Especial</p>
-              </div>
-            </div>
-
-            {/* Photo 3 */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-xl aspect-[4/3]">
-              <img
-                src="/images/foto3.png"
-                alt="Momento romântico"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-rose-600/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <p className="text-white text-lg font-medium">Momento Romântico</p>
-              </div>
-            </div>
-
-            {/* Photo 4 */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-xl aspect-[4/3]">
-              <img
-                src="/images/foto4.png"
-                alt="Celebrando juntos"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-rose-600/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <p className="text-white text-lg font-medium">Celebrando Juntos</p>
-              </div>
-            </div>
-
-            {/* Photo 5 */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-xl aspect-[4/3]">
-              <img
-                src="/images/foto5.png"
-                alt="Juntos para sempre"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-rose-600/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <p className="text-white text-lg font-medium">Juntos Para Sempre</p>
-              </div>
-            </div>
-
-            {/* Photo 6 - Extra */}
-            <div className="group relative overflow-hidden rounded-2xl shadow-xl aspect-[4/3]">
-              <img
-                src="/images/foto6.png"
-                alt="Nosso amor"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-rose-600/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <p className="text-white text-lg font-medium">Nosso Amor</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Quote Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-2xl border border-pink-100">
-            <svg className="w-16 h-16 text-rose-400 mx-auto mb-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-            <blockquote className="text-2xl md:text-3xl text-rose-600 font-medium italic mb-6">
-              "O amor não é sobre quantos dias, meses ou anos vocês estão juntos.
-              É sobre o quanto vocês se importam um com o outro a cada dia."
+      <section className="relative z-10 py-40 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <Quote className="absolute -top-12 -left-4 md:-left-12 w-24 h-24 text-rose-500/10" />
+            <blockquote className="text-3xl md:text-5xl text-rose-100 font-medium leading-relaxed mb-12">
+              "O amor não é sobre quantos dias, meses ou anos vocês estão juntos. É sobre o quanto vocês se importam um com o outro a cada dia."
             </blockquote>
-            <div className="w-24 h-1 bg-gradient-to-r from-pink-400 to-rose-500 mx-auto rounded-full" />
-          </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-1 w-24 bg-gradient-to-r from-transparent via-rose-500 to-transparent" />
+              <p className="text-rose-400 font-playfair italic text-xl">Para todo o sempre</p>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 text-center text-rose-500/60">
-        <p className="text-sm">Feito com ❤️ para celebrar nosso amor</p>
+      <footer className="relative z-10 py-12 text-center">
+        <div className="flex items-center justify-center gap-2 text-slate-500 mb-2">
+          <span>Feito com</span>
+          <Heart size={14} className="text-rose-500 fill-rose-500" />
+          <span>por Gabriel Trajano</span>
+        </div>
+        <p className="text-xs text-slate-600 uppercase tracking-widest">© 2024 Nosso Amor Infinito</p>
       </footer>
     </main>
   );
