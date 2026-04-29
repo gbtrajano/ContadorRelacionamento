@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { 
-  differenceInSeconds, 
-  differenceInMinutes, 
-  differenceInHours, 
-  differenceInDays, 
-  differenceInWeeks, 
-  differenceInMonths, 
-  differenceInYears 
+import {
+  differenceInSeconds,
+  differenceInMinutes,
+  differenceInHours,
+  differenceInDays,
+  differenceInWeeks,
+  differenceInMonths,
+  differenceInYears
 } from "date-fns";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Heart, Calendar, Camera, Quote, Clock, ChevronDown } from "lucide-react";
@@ -99,7 +99,7 @@ export default function Home() {
           </motion.div>
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 1 }}
@@ -150,7 +150,7 @@ export default function Home() {
             </AnimatePresence>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -195,15 +195,15 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-0 left-0 right-0 p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                   <div className="h-1 w-12 bg-rose-500 mb-4 rounded-full" />
-                   <p className="text-white text-xl font-semibold italic">
+                  <div className="h-1 w-12 bg-rose-500 mb-4 rounded-full" />
+                  <p className="text-white text-xl font-semibold italic">
                     {i === 1 && "Nosso Primeiro Encontro"}
                     {i === 2 && "Nossa Viagem Especial"}
                     {i === 3 && "Um Momento Mágico"}
                     {i === 4 && "Celebrando a Vida"}
-                    {i === 5 && "Onde Tudo Começou"}
-                    {i === 6 && "Nosso Futuro Juntos"}
-                   </p>
+                    {i === 5 && "Momento Romântico"}
+                    {i === 6 && "Nosso Amor"}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -239,7 +239,7 @@ export default function Home() {
           <Heart size={14} className="text-rose-500 fill-rose-500" />
           <span>por Gabriel Trajano</span>
         </div>
-        <p className="text-xs text-slate-600 uppercase tracking-widest">© 2024 Nosso Amor Infinito</p>
+        <p className="text-xs text-slate-600 uppercase tracking-widest">© 2026 Nosso Amor Infinito</p>
       </footer>
     </main>
   );
